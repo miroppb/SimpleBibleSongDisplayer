@@ -1,0 +1,20 @@
+﻿<Window x:Name="FrmProject2" x:Class="Project.FrmProject1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Project"
+        mc:Ignorable="d"
+        Title="FrmProject1" Height="720" Width="1280" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" Background="#FF333333">
+    <Grid x:Name="Grid1" HorizontalAlignment="Left" Height="184" Margin="63,476,0,0" VerticalAlignment="Top" Width="1150">
+        <MediaElement HorizontalAlignment="Left" Height="720" Margin="-64,-474,-66,-62" VerticalAlignment="Top" Width="1280" x:FieldModifier="public" Name="stream"/>
+        <Image Width="1280" Height="720" Stretch="Fill" Name="overlay" Margin="-64,-474,-66,-62" x:FieldModifier="public">
+            <Image.Source>
+                <BitmapImage UriSource="bible.png"/>
+            </Image.Source>
+        </Image>
+        <TextBlock x:Name="LblTop" x:FieldModifier="public" Text="Label" HorizontalAlignment="Left" Margin="67,9,0,0" VerticalAlignment="Top" Height="39" Width="378" FontFamily="Segoe UI Black" FontSize="26"/>
+        <TextBlock x:Name="LblText" HorizontalAlignment="Left" x:FieldModifier="public" Margin="8,59,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="115" Width="1132" Foreground="White" FontFamily="Calibri Light" FontSize="30"/>
+
+    </Grid>
+</Window>

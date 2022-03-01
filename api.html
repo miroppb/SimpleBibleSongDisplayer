@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+		<title>Junk</title>
+		<script>
+		$(document).ready(function() {  
+			$.getJSON("http://localhost:1111/api/demo/schedule", function(data) {
+				$.each(data.schedule, function(key, value) {
+					$('#sch').append(new Option(value, key));
+					$('#sch').attr('size', key+1);
+				});
+			});
+			$('#sch').on('change', function() {
+				$.get( "http://localhost:1111/api/demo/" + this.value );
+			});
+			$('#show').click(function() {
+				$.get( "http://localhost:1111/api/demo/show");
+				setTimeout(function(){
+					$.getJSON("http://localhost:1111/api/demo/showshow", function(data) {
+						$.each(data.show, function(key, value) {
+							$('#shw').append(new Option(value, key));
+							$('#shw').attr('size', key+1);
+						});
+						$('[name=show]').val(4);
+					});
+				}, 1000);
+			});
+			$('#shw').on('change', function() {
+				$.get( "http://localhost:1111/api/demo/a" + ((parseInt(this.value) + 1)*-1) );
+				console.log((parseInt(this.value) + 1)*-1);
+			});
+		}); 
+		</script>
+	</head>
+	<body>
+		<select id="sch" name="schedule">
+		</select><br />
+		<button id="show">Show</button><br />
+		<select id="shw" name="show" size="5">
+		</select>
+	</body>
+</html>
