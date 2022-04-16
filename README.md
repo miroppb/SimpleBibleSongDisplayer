@@ -1,6 +1,6 @@
 ## SimpleBibleSongDisplayer2
 
-This application is meant to be used to churches or really any place that can benefit from it.
+This application is meant to be used to churches or really any place that can benefit from it. I created this application for my church, back when  we were using SoftProjector, but wanted something with more features. We then started using EasyWorship, so I didn't work on it much, but I still use it during our video streams.
 
 Application does:
 1. Reads .xml file with lines of text. Recommend using something like
