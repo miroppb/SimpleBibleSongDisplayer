@@ -3,9 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web.Http;
-using System.Windows;
 
 namespace SimpleBibleSongDisplayer
 {
@@ -23,15 +21,14 @@ namespace SimpleBibleSongDisplayer
             FrmMain frm = FrmMain.outside;
 
             string a = "a";
+            Object ret = null;
             if (id == "schedule")
             {
-                a = "{\"schedule\":[";
-                for (int b = 0; b < frm.LstSchedule.Items.Count; b++)
-                {
-                    a += "\"" + frm.LstSchedule.Items[b].ToString().Replace(Environment.NewLine,"").Replace("\"", "\\\"") + "\",";
-                }
-                a = a.TrimEnd(',');
-                a += "]}";
+                List<string> list = new List<string>();
+                foreach (Object o in frm.LstSchedule.Items)
+                    list.Add(o.ToString());
+
+                ret = new { schedule = String.Join(",", list) };
             }
             else if (id == "show")
             {
@@ -43,13 +40,11 @@ namespace SimpleBibleSongDisplayer
             }
             else if (id == "showshow")
             {
-                a = "{\"show\":[";
-                for (int b = 0; b < frm.LstShow.Items.Count; b++)
-                {
-                    a += "\"" + frm.LstShow.Items[b].ToString().Replace(Environment.NewLine, "").Replace("\"","\\\"") + "\",";
-                }
-                a = a.TrimEnd(',');
-                a += "]}";
+                List<string> list = new List<string>();
+                foreach (Object o in frm.LstShow.Items)
+                    list.Add(o.ToString());
+
+                ret = new { show = String.Join(",", list) };
             }
             else if (id.StartsWith("a"))
             {
@@ -63,15 +58,11 @@ namespace SimpleBibleSongDisplayer
                 frm.TxtSearch.Text = "";
                 frm.TxtSearch.Text = b;
 
-                a = "{\"search\":[";
-                for (int c = 0; c < frm.DgvVerses.Rows.Count; c++)
-                {
-                    string d = frm.DgvVerses.Rows[c].Cells[0].Value + " " + frm.DgvVerses.Rows[c].Cells[1].Value;
-                    d = d.Replace(Environment.NewLine, "").Replace("\"", "\\\"");
-                    a += "\"" + d + "\",";
-                }
-                a = a.TrimEnd(',');
-                a += "]}";
+                List<string> list = new List<string>();
+                foreach (System.Windows.Forms.DataGridViewRow row in frm.DgvVerses.Rows)
+                    list.Add(row.Cells[0].Value + " " + row.Cells[1].Value);
+
+                ret = new { search = String.Join(",", list) };
             }
             else if (id.StartsWith("s-"))
             {
@@ -98,7 +89,8 @@ namespace SimpleBibleSongDisplayer
 
             return new HttpResponseMessage()
             {
-                Content = new StringContent(a, Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonConvert.SerializeObject(ret), Encoding.UTF8, "application/json")
+                //Content = new StringContent(a, Encoding.UTF8, "application/json")
             };
         }
 
