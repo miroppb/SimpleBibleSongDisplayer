@@ -138,7 +138,7 @@ namespace SimpleBibleSongDisplayer
             secondMonitor = SimpleBibleSongDisplayer.Properties.Settings.Default.SecondMonitor;
             Init();
 
-            WebApp.Start<Startup>("http://*:1111");
+            WebApp.Start<Startup>("http://localhost:1111");
         }
 
         private void DgvVerses_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)

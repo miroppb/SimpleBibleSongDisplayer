@@ -50,7 +50,7 @@
             this.ChkXML.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ChkXML.Location = new System.Drawing.Point(12, 12);
             this.ChkXML.Name = "ChkXML";
-            this.ChkXML.Size = new System.Drawing.Size(48, 17);
+            this.ChkXML.Size = new System.Drawing.Size(55, 19);
             this.ChkXML.TabIndex = 0;
             this.ChkXML.Text = "XML";
             this.ChkXML.UseVisualStyleBackColor = true;
@@ -109,7 +109,7 @@
             this.ChkUseOverlay.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ChkUseOverlay.Location = new System.Drawing.Point(12, 91);
             this.ChkUseOverlay.Name = "ChkUseOverlay";
-            this.ChkUseOverlay.Size = new System.Drawing.Size(62, 17);
+            this.ChkUseOverlay.Size = new System.Drawing.Size(69, 19);
             this.ChkUseOverlay.TabIndex = 3;
             this.ChkUseOverlay.Text = "Overlay";
             this.ChkUseOverlay.UseVisualStyleBackColor = true;
@@ -122,7 +122,7 @@
             this.ChkAOT.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ChkAOT.Location = new System.Drawing.Point(12, 174);
             this.ChkAOT.Name = "ChkAOT";
-            this.ChkAOT.Size = new System.Drawing.Size(96, 17);
+            this.ChkAOT.Size = new System.Drawing.Size(107, 19);
             this.ChkAOT.TabIndex = 5;
             this.ChkAOT.Text = "Always on Top";
             this.ChkAOT.UseVisualStyleBackColor = true;
@@ -141,7 +141,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(15, 213);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(31, 13);
+            this.label1.Size = new System.Drawing.Size(34, 15);
             this.label1.TabIndex = 7;
             this.label1.Text = "Font:";
             // 
@@ -150,7 +150,7 @@
             this.ChkSecond.AutoSize = true;
             this.ChkSecond.Location = new System.Drawing.Point(12, 248);
             this.ChkSecond.Name = "ChkSecond";
-            this.ChkSecond.Size = new System.Drawing.Size(107, 17);
+            this.ChkSecond.Size = new System.Drawing.Size(123, 19);
             this.ChkSecond.TabIndex = 8;
             this.ChkSecond.Text = "Second Monitor?";
             this.ChkSecond.UseVisualStyleBackColor = true;
@@ -159,6 +159,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(386, 312);
             this.ControlBox = false;
             this.Controls.Add(this.ChkSecond);
