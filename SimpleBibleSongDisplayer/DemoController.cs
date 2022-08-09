@@ -28,7 +28,7 @@ namespace SimpleBibleSongDisplayer
                 foreach (Object o in frm.LstSchedule.Items)
                     list.Add(o.ToString());
 
-                ret = new { schedule = String.Join(",", list) };
+                ret = new { schedule = list };
             }
             else if (id == "show")
             {
@@ -44,7 +44,7 @@ namespace SimpleBibleSongDisplayer
                 foreach (Object o in frm.LstShow.Items)
                     list.Add(o.ToString());
 
-                ret = new { show = String.Join(",", list) };
+                ret = new { show = list };
             }
             else if (id.StartsWith("a"))
             {
@@ -62,7 +62,7 @@ namespace SimpleBibleSongDisplayer
                 foreach (System.Windows.Forms.DataGridViewRow row in frm.DgvVerses.Rows)
                     list.Add(row.Cells[0].Value + " " + row.Cells[1].Value);
 
-                ret = new { search = String.Join(",", list) };
+                ret = new { search = list };
             }
             else if (id.StartsWith("s-"))
             {
