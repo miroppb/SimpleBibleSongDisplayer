@@ -43,11 +43,6 @@ namespace SimpleBibleSongDisplayer
             }
         }
 
-        private Dispatcher _dispatcher;
-        public void SetDispatcher(Dispatcher dispatcher) {
-            _dispatcher = dispatcher;
-        }
-
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FrmSettings frm = new FrmSettings();
