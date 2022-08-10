@@ -202,6 +202,7 @@
             this.TxtSearch.Size = new System.Drawing.Size(353, 20);
             this.TxtSearch.TabIndex = 0;
             this.TxtSearch.TextChanged += new System.EventHandler(this.TxtSearch_TextChanged);
+            this.TxtSearch.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtSearch_KeyPress);
             // 
             // DgvVerses
             // 
@@ -245,21 +246,21 @@
             // newScheduleToolStripMenuItem
             // 
             this.newScheduleToolStripMenuItem.Name = "newScheduleToolStripMenuItem";
-            this.newScheduleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newScheduleToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.newScheduleToolStripMenuItem.Text = "New Schedule";
             this.newScheduleToolStripMenuItem.Click += new System.EventHandler(this.newScheduleToolStripMenuItem_Click);
             // 
             // openScheduleToolStripMenuItem
             // 
             this.openScheduleToolStripMenuItem.Name = "openScheduleToolStripMenuItem";
-            this.openScheduleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openScheduleToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.openScheduleToolStripMenuItem.Text = "Open Schedule";
             this.openScheduleToolStripMenuItem.Click += new System.EventHandler(this.openScheduleToolStripMenuItem_Click);
             // 
             // saveScheduleToolStripMenuItem
             // 
             this.saveScheduleToolStripMenuItem.Name = "saveScheduleToolStripMenuItem";
-            this.saveScheduleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveScheduleToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.saveScheduleToolStripMenuItem.Text = "Save Schedule";
             this.saveScheduleToolStripMenuItem.Click += new System.EventHandler(this.saveScheduleToolStripMenuItem_Click);
             // 
@@ -277,28 +278,28 @@
             // addSpeakerToolStripMenuItem
             // 
             this.addSpeakerToolStripMenuItem.Name = "addSpeakerToolStripMenuItem";
-            this.addSpeakerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.addSpeakerToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.addSpeakerToolStripMenuItem.Text = "&Add Speaker";
             this.addSpeakerToolStripMenuItem.Click += new System.EventHandler(this.addSpeakerToolStripMenuItem_Click);
             // 
             // processtxtToolStripMenuItem
             // 
             this.processtxtToolStripMenuItem.Name = "processtxtToolStripMenuItem";
-            this.processtxtToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.processtxtToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.processtxtToolStripMenuItem.Text = "Process .txt";
             this.processtxtToolStripMenuItem.Click += new System.EventHandler(this.processtxtToolStripMenuItem_Click);
             // 
             // processxmlToolStripMenuItem
             // 
             this.processxmlToolStripMenuItem.Name = "processxmlToolStripMenuItem";
-            this.processxmlToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.processxmlToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.processxmlToolStripMenuItem.Text = "Process .xml/db";
             this.processxmlToolStripMenuItem.Click += new System.EventHandler(this.processxmlToolStripMenuItem_Click);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 

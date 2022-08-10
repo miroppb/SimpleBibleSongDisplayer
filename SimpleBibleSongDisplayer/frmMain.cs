@@ -623,6 +623,12 @@ namespace SimpleBibleSongDisplayer
             }
         }
 
+        private void TxtSearch_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == Convert.ToChar(Keys.Escape))
+                TxtSearch.Clear();
+        }
+
         private async void Fade(string newText, int milliseconds)
         {
             //try to divide the text
