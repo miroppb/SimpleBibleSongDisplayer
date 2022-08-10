@@ -9,10 +9,9 @@ using System.Windows.Media.Imaging;
 using System.IO;
 using Microsoft.Owin.Hosting;
 using System.Windows.Threading;
-
-using miroppb;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Text;
 
 namespace SimpleBibleSongDisplayer
 {
@@ -97,35 +96,64 @@ namespace SimpleBibleSongDisplayer
         {
             DataView dv = dt.DefaultView;
             try
-            {//still need to do something for 2Kings, but it's not that important...
-                string[] s = TxtSearch.Text.Split(' ');
-                if (s.Length == 1)
-                    dv.RowFilter = string.Format(TxtFormat.Text, TxtSearch.Text);
-                else if (s.Length == 2)
-                {
-                    if (int.TryParse(s[1], out int z))
-                    {
-                        string n = TxtFormat.Text + " AND " + TxtFormat.Text.Replace("{0}", " {1}");
-                        dv.RowFilter = string.Format(n, s[0], s[1]);
-                    }
-                    else
-                        dv.RowFilter = string.Format(TxtFormat.Text, s[0], s[1]);
-                }
-                else if (s.Length == 3)
-                {
-                    if (int.TryParse(s[1], out int z) && int.TryParse(s[2], out int zz))
-                    {
-                        string n = TxtFormat.Text + " AND " + TxtFormat.Text.Remove(TxtFormat.Text.LastIndexOf("%")).Replace("{0}", " {1}") + ":" + TxtFormat.Text.Remove(0,TxtFormat.Text.IndexOf("{")).Replace("0","2");
-                        dv.RowFilter = string.Format(n, s[0], s[1], s[2]);
-                    }
-                    else
-                        dv.RowFilter = string.Format(TxtFormat.Text, s[0], s[1], s[2]);
-                }
-                else
-                    throw new NotImplementedException();
+            {
+                (string, List<string>) ret = SplitAndGetFilter(TxtSearch.Text, TxtFormat.Text);
+                if (ret.Item1 != null && ret.Item2 != null)
+                    dv.RowFilter = String.Format(ret.Item1, ret.Item2.ToArray());
+
                 DgvVerses.DataSource = dv.ToTable();
             }
             catch (Exception ex) { System.Windows.Forms.MessageBox.Show(ex.ToString()); }
+        }
+
+        (string, List<string>) SplitAndGetFilter(string search, string where)
+        {
+            List<string> results = new List<string>();
+            results = search.Split(' ').ToList();
+
+            Regex reg = new Regex("^(\\d)\\D+");
+            Match match = reg.Match(results[0]);
+            bool startsWithNum = false;
+            if (match.Success)
+            {
+                startsWithNum = true;
+                results[0] = results[0].Remove(0, 1);
+            }
+
+            if (results.Count == 1)
+            {
+                string newWhere = where;
+                if (startsWithNum)
+                {
+                    newWhere = where + " AND " + where.Replace("{0}", "{1}");
+                    results.Insert(0, match.Groups[1].Value + "-");
+                }
+
+                return (newWhere, results);
+            }
+            else if (results.Count == 2)
+            {
+                string newWhere = where + " AND " + where.Replace("{0}", " {1}"); //book like '%{0}%' AND book like '%{1}%'
+                if (startsWithNum)
+                {
+                    newWhere += " AND " + where.Replace("{0}", " {2}"); //book like '%{0}%' AND book like '%{1}%' AND book like '%{2}%'
+                    results.Insert(0, match.Groups[1].Value + "-");
+                }
+
+                return (newWhere, results);
+            }
+            else if (results.Count == 3)
+            {
+                string newWhere = where + " AND " + where.Replace("{0}", " {1}:{2}"); //book like '%{0}%' AND book like '%{1}:{2}%'
+                if (startsWithNum)
+                {
+                    newWhere = where + " AND " + where.Replace("{0}", "{1}") + " AND " + where.Replace("{0}", " {2}:{3}"); //book like '%{0}%' AND book like '%{1}%' AND book like '%{2}:{3}%'
+                    results.Insert(0, match.Groups[1].Value + "-");
+                }
+
+                return (newWhere, results);
+            }
+            return (null, null);
         }
 
         private void FrmMain_Load(object sender, EventArgs e)
