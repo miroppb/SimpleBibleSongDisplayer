@@ -393,6 +393,26 @@ namespace SimpleBibleSongDisplayer
                 _beginDragDrop = true;
             else
                 _beginDragDrop = false;
+            if (e.Button == MouseButtons.Right)
+            {
+                bool a = this.TopMost;
+                this.TopMost = false;
+
+                if (LstSchedule.SelectedIndex > -1)
+                {
+                    string[] item = LstSchedule.SelectedItem.ToString().Split('\t');
+                    int sel = LstSchedule.SelectedIndex;
+                    FrmSpeaker frm = new FrmSpeaker();
+                    frm.TxtName.Text = item[0].Replace("Speaker::", "");
+                    frm.TxtLower.Text = item[1];
+
+                    if (frm.ShowDialog() == DialogResult.OK)
+                    {
+                        LstSchedule.Items[sel] = "Speaker::" + frm.TxtName.Text + "\t" + frm.TxtLower.Text;
+                    }
+                }
+                this.TopMost = a;
+            }
         }
 
         private void LstSchedule_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
