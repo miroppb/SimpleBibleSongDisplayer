@@ -14,9 +14,11 @@ Application does:
 2. Searches by book title.
     * Search with spaces
     * ie. Luke 4 1 will look for Luke 4:1
+        * 2Kings 5 5 works too
     * Search parameters can be adjusted as needed (2nd box)
 3. Double-click verse/text to add to schedule
     * Double-click from schedule to search for said verse/text
+    * Right click once to edit
 4. Add "Speaker" or non-bible text.
     * Speaker text is added to Live Schedule when double-clicked on
 5. Items in schedule can be rearranged by dragging.
@@ -25,12 +27,29 @@ Application does:
     * Live Schedule is shown on right
     * Clicking item advances to that verse/text
     * Click up or down arrows (beside Live) to make verse text size larger or smaller
+    * Pressing a number will move the selection up by that amount. ie. Press 4 to move up 4 items.
 7. API Server exists
     * Allows practically all functions available on main layout
+        * Go Live
+        ```
+        /api/go
+        ```
         * Search for text
-        * Select text and go Live
-        * Use Schedule to make pulling up text easier
-        * Advance text on Live Schedule
+        ```
+        /api/search/text
+        ```
+        * When searching, select verse
+        ```
+        /api/setverseitem/index
+        ```
+        * Select item on schedule
+        ```
+        /api/setscheduleitem/index
+        ```
+        * Select item on Live Schedule
+        ```
+        /api/setshowitem/index
+        ```
     * Port 1111
         * Make sure you open firewall, to be able to connect from other devices
 8. Ability to "process" a text file

@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.LstShow = new System.Windows.Forms.ListBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -54,7 +53,6 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.TS_CurrentSchedule = new System.Windows.Forms.ToolStripStatusLabel();
             this.LstSchedule = new System.Windows.Forms.ListBox();
-            this.timerAction = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -337,15 +335,9 @@
             this.LstSchedule.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LstSchedule_MouseDown);
             this.LstSchedule.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LstSchedule_MouseMove);
             // 
-            // timerAction
-            // 
-            this.timerAction.Enabled = true;
-            this.timerAction.Tick += new System.EventHandler(this.timerAction_Tick);
-            // 
             // FrmMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(1048, 620);
             this.Controls.Add(this.splitContainer1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -391,7 +383,6 @@
         private System.Windows.Forms.Label LblTotal;
         public System.Windows.Forms.ListBox LstShow;
         public System.Windows.Forms.ListBox LstSchedule;
-        private System.Windows.Forms.Timer timerAction;
         public System.Windows.Forms.DataGridView DgvVerses;
         public System.Windows.Forms.TextBox TxtSearch;
         private System.Windows.Forms.StatusStrip statusStrip1;

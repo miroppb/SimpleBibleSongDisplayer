@@ -18,9 +18,6 @@ namespace SimpleBibleSongDisplayer
         public bool UseXML = true, UseImage = true, secondMonitor = false;
         DataTable dt = null;
         private bool _beginDragDrop = false;
-        public static FrmMain outside;
-        public int Action = -999;
-        public int Action1 = -999;
 
         string currentSchedule = "";
 
@@ -31,7 +28,6 @@ namespace SimpleBibleSongDisplayer
         public FrmMain()
         {
             InitializeComponent();
-            outside = this;
 
             if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\SimpleBibleSongDisplayer"))
             {
@@ -580,31 +576,31 @@ namespace SimpleBibleSongDisplayer
             }
         }
 
-        private void timerAction_Tick(object sender, EventArgs e)
+        public void DoStuff(Action action)
         {
-            if (Action != -999)
+            switch (action)
             {
-                if (Action > 0)
-                {
-                    LstSchedule.SelectedIndex = Action - 1;
-                    LstSchedule_MouseDoubleClick(null, null);
-                }
-                else if (Action == 0)
+                case Action.show:
                     BtnGo_Click(null, null);
-                else if (Action < 0 && Action > -999)
-                {
-                    LstShow.SelectedIndex = (Action * -1) - 1;
-                }
+                    break;
             }
-            if (Action1 != -999)
+        }
+
+        public void DoStuff(Action action, int ByHowMuch)
+        {
+            switch (action)
             {
-                if (Action1 >= 0)
-                {
-                    DgvVerses.Rows[Action1].Selected = true;
-                }
+                case Action.setshowitem:
+                    LstShow.SelectedIndex = ByHowMuch;
+                    break;
+                case Action.setscheduleitem:
+                    LstSchedule.SelectedIndex = ByHowMuch;
+                    LstSchedule_MouseDoubleClick(null, null);
+                    break;
+                case Action.setverseitem:
+                    DgvVerses.Rows[ByHowMuch].Selected = true;
+                    break;
             }
-            Action = -999;
-            Action1 = -999;
         }
 
         private void newScheduleToolStripMenuItem_Click(object sender, EventArgs e)

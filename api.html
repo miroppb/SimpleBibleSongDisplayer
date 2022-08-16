@@ -2,41 +2,120 @@
 <html>
 	<head>
 		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+		<script src="safari.js"></script>
 		<title>Junk</title>
 		<script>
 		$(document).ready(function() {  
-			$.getJSON("http://localhost:1111/api/demo/schedule", function(data) {
+			$.getJSON("http://localhost:1111/api/schedule", function(data) { //load schedule
 				$.each(data.schedule, function(key, value) {
-					$('#sch').append(new Option(value, key));
+					if (String(value).length > 100)
+					{
+						$('#sch').append(new Option(String(value).substr(0,50) + '...' + String(value).substr(-50), key));
+					}
+					else
+					{
+						$('#sch').append(new Option(value, key));
+					}
 					$('#sch').attr('size', key+1);
+					if (data.selected > -1)
+					{
+						$('[name=schedule]').val(data.selected);
+					}
 				});
 			});
 			$('#sch').on('change', function() {
-				$.get( "http://localhost:1111/api/demo/" + this.value );
+				$.get( "http://localhost:1111/api/setscheduleitem/" + this.value ); //send new item on schedule
+				var selectedText = $(this).find("option:selected").text();
+				if (selectedText.includes("Speaker"))
+				{
+					setTimeout(function(){
+					$.getJSON("http://localhost:1111/api/show", function(data) { //get current show
+						$('#shw').empty();
+						$.each(data.show, function(key, value) {
+							if (String(value).length > 100)
+							{
+								$('#shw').append(new Option(String(value).substr(0,50) + '...' + String(value).substr(-50), key));
+							}
+							else
+							{
+								$('#shw').append(new Option(value, key));
+							}
+							$('#shw').attr('size', key+1);
+							$("#shw").trigger('item-added');
+						});
+						$('[name=show]').val(data.selected);
+					});
+					}, 1000);
+				}
 			});
 			$('#show').click(function() {
-				$.get( "http://localhost:1111/api/demo/show");
+				$.get( "http://localhost:1111/api/go"); //show current bible
 				setTimeout(function(){
-					$.getJSON("http://localhost:1111/api/demo/showshow", function(data) {
+					$.getJSON("http://localhost:1111/api/show", function(data) { //get current show
+						$('#shw').empty();
 						$.each(data.show, function(key, value) {
-							$('#shw').append(new Option(value, key));
+							if (String(value).length > 100)
+							{
+								$('#shw').append(new Option(String(value).substr(0,50) + '...' + String(value).substr(-50), key));
+							}
+							else
+							{
+								$('#shw').append(new Option(value, key));
+							}
 							$('#shw').attr('size', key+1);
+							$("#shw").trigger('item-added');
 						});
-						$('[name=show]').val(4);
+						$('[name=show]').val(data.selected);
 					});
 				}, 1000);
 			});
 			$('#shw').on('change', function() {
-				$.get( "http://localhost:1111/api/demo/a" + ((parseInt(this.value) + 1)*-1) );
-				console.log((parseInt(this.value) + 1)*-1);
+				$.get( "http://localhost:1111/api/setshowitem/" + (parseInt(this.value))); //change item on show
+				console.log((parseInt(this.value)));
 			});
-		}); 
+			$('#srch').click(function() {
+				var a = $('#search').val();
+				$.getJSON("http://localhost:1111/api/search/" + a, function(data) { //search bible
+					$('#srch_result').empty();
+					$.each(data.search, function(key, value) {
+						if (String(value).length > 100)
+						{
+							$('#srch_result').append(new Option(String(value).substr(0,50) + '...' + String(value).substr(-50), key));
+						}
+						else
+						{
+							$('#srch_result').append(new Option(value, key));
+						}
+						$('#srch_result').attr('size', key+1);
+						$("#srch_result").trigger('item-added');
+					});
+				});
+			});
+			$('#srch_result').on('change', function() {
+				$.get("http://localhost:1111/api/setverseitem/" + this.value); //change item on verse
+				console.log(this.value);
+			});
+			$('#hide').click(function() {
+				$('#srch_result').empty();
+				$('#srch_result').attr('size', 5);
+			});
+			$("select").fixForSafariMobile();
+		});
 		</script>
+		<style>
+			#srch_result_safarimobile { height: 200px;  width:700px; }
+			#shw_safarimobile { height: 300px;  width:700px; }
+			option_safarimobile { padding: 5px 2px; }
+			.multilineselect li { line-height: 2; }
+			#shw option { padding: 5px 0px; }
+		</style>
 	</head>
 	<body>
 		<select id="sch" name="schedule">
 		</select><br />
 		<button id="show">Show</button><br />
+		<input type="text" id="search" size="25" autocomplete="off" /><button id="srch">Search</button><button id="hide">Clear</button><br />
+		<select id="srch_result" name="search_result" size="5"></select><br />
 		<select id="shw" name="show" size="5">
 		</select>
 	</body>

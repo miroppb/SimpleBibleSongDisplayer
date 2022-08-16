@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -17,47 +18,49 @@ namespace SimpleBibleSongDisplayer.Controllers
             return new string[] { "Hello" };
         }
 
-        [HttpGet("{id}")]
-        public IActionResult Get(string id)
+        [HttpGet("{endpoint}")]
+        public ActionResult<string> Get(string endpoint)
         {
-            Object ret = null;
-            Program.frm.Invoke(new Action(() =>
+            object ret = null;
+            Program.frm.Invoke(new System.Action(() =>
             {
-                if (id == "schedule")
+                switch(endpoint)
                 {
-                    List<string> list = new List<string>();
-                    foreach (Object o in Program.frm.LstSchedule.Items)
-                        list.Add(o.ToString());
+                    case "schedule":
+                        List<string> schlist = new List<string>();
+                        foreach (Object o in Program.frm.LstSchedule.Items)
+                            schlist.Add(o.ToString());
+                        int selected = Program.frm.LstSchedule.SelectedIndex;
 
-                    ret = new { schedule = list };
-                }
-                else if (id == "show")
-                {
-                    try
-                    {
-                        Program.frm.Action = 0;
-                    }
-                    catch { }
-                }
-                else if (id == "showshow")
-                {
-                    List<string> list = new List<string>();
-                    foreach (Object o in Program.frm.LstShow.Items)
-                        list.Add(o.ToString());
+                        ret = new { schedule = schlist, selected = selected };
+                        break;
+                    case "go":
+                        Program.frm.DoStuff(Action.show);
+                        break;
+                    case "show":
+                        List<string> showlist = new List<string>();
+                        foreach (Object o in Program.frm.LstShow.Items)
+                            showlist.Add(o.ToString());
+                        selected = Program.frm.LstShow.SelectedIndex;
 
-                    ret = new { show = list };
+                        ret = new { show = showlist, selected = selected };
+                        break;
                 }
-                else if (id.StartsWith("a"))
-                {
-                    int b = Convert.ToInt32(id.Remove(0, 1));
-                    Program.frm.Action = b;
-                }
-                else if (id.StartsWith("srch-"))
+            }));
+            return Ok(ret);
+        }
+
+        [HttpGet("{_action}/{change}")]
+        public ActionResult<string> Get(string _action, string change)
+        {
+            object ret = null;
+            Program.frm.Invoke(new System.Action(() =>
+            {
+                if (_action == "search")
                 {
                     //Searching bible
-                    string b = id.Remove(0, 5);
                     Program.frm.TxtSearch.Text = "";
-                    Program.frm.TxtSearch.Text = b;
+                    Program.frm.TxtSearch.Text = change;
 
                     List<string> list = new List<string>();
                     foreach (System.Windows.Forms.DataGridViewRow row in Program.frm.DgvVerses.Rows)
@@ -65,25 +68,11 @@ namespace SimpleBibleSongDisplayer.Controllers
 
                     ret = new { search = list };
                 }
-                else if (id.StartsWith("s-"))
-                {
-                    //Select bible
-                    try
-                    {
-                        int b = Convert.ToInt32(id.Remove(0, 2));
-                        Program.frm.Action1 = b;
-                    }
-                    catch { }
-                }
                 else
                 {
-                    //Select
-                    try
-                    {
-                        int b = Convert.ToInt32(id);
-                        Program.frm.Action = b + 1;
-                    }
-                    catch { }
+                    Enum.TryParse(_action, out Action _act);
+                    Program.frm.DoStuff(_act, Convert.ToInt32(change));
+                    ret = "success";
                 }
             }));
             return Ok(ret);
