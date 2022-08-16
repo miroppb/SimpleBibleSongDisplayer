@@ -7,11 +7,8 @@ using System.Windows.Forms;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.IO;
-using Microsoft.Owin.Hosting;
-using System.Windows.Threading;
 using System.Text.RegularExpressions;
 using System.Linq;
-using System.Text;
 
 namespace SimpleBibleSongDisplayer
 {
@@ -160,8 +157,6 @@ namespace SimpleBibleSongDisplayer
             TopMost = SimpleBibleSongDisplayer.Properties.Settings.Default.AOT;
             secondMonitor = SimpleBibleSongDisplayer.Properties.Settings.Default.SecondMonitor;
             Init();
-
-            WebApp.Start<Startup>("http://localhost:1111");
         }
 
         private void DgvVerses_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
