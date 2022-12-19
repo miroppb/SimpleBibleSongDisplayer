@@ -48,10 +48,10 @@ namespace SimpleBibleSongDisplayer
             libmiroppb.Log("Checking db...");
             try
             {
-                if (!File.Exists("db.sqlite"))
+                if (!File.Exists(secrets.filename))
                 {
                     libmiroppb.Log("Creating db and adding tables");
-                    File.Create("db.sqlite");
+                    File.Create(secrets.filename);
                     await Task.Delay(100);
                     using (SQLiteConnection db = secrets.GetConnection())
                     {

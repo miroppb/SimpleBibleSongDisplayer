@@ -9,9 +9,10 @@ namespace SimpleBibleSongDisplayer
 {
     public class secrets
     {
+        public static string filename = "db.sqlite";
         public static SQLiteConnection GetConnection()
         {
-            return new SQLiteConnection("Data Source=db.sqlite;Version=3;");
+            return new SQLiteConnection($"Data Source={filename};Version=3;");
         }
     }
 }
