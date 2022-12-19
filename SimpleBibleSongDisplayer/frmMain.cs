@@ -679,9 +679,7 @@ namespace SimpleBibleSongDisplayer
 
             await Task.Delay(milliseconds);
             if (a.Length == 1)
-            {
                 f.LblText.Text = a[0];
-            }
             else
             {
                 f.LblTop.Text = a[0];
