@@ -9,6 +9,10 @@ using System.Windows.Media.Imaging;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Drawing;
+using System.Data.SQLite;
+using Dapper;
+using miroppb;
 
 namespace SimpleBibleSongDisplayer
 {
@@ -34,6 +38,30 @@ namespace SimpleBibleSongDisplayer
                 Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\SimpleBibleSongDisplayer");
                 miroppb.libmiroppb.Log("Created Application folder: " + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\SimpleBibleSongDisplayer");
             }
+
+            CheckDB();
+        }
+
+        private async void CheckDB()
+        {
+            //check db
+            libmiroppb.Log("Checking db...");
+            try
+            {
+                if (!File.Exists("db.sqlite"))
+                {
+                    libmiroppb.Log("Creating db and adding tables");
+                    File.Create("db.sqlite");
+                    await Task.Delay(100);
+                    using (SQLiteConnection db = secrets.GetConnection())
+                    {
+                        db.Execute("CREATE TABLE 'autocomplete' ('id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 'text' TEXT);");
+                        db.Execute("CREATE TABLE 'songs' ('id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 'text' TEXT);");
+                        db.Close();
+                    }
+                }
+            }
+            catch (Exception ex) { libmiroppb.Log($"Error: {ex.Message}"); }
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -189,7 +217,7 @@ namespace SimpleBibleSongDisplayer
                 }
                 catch { System.Windows.MessageBox.Show("Second monitor not detected. Disabling..."); secondMonitor = false; SimpleBibleSongDisplayer.Properties.Settings.Default.SecondMonitor = false; }
             }
-            if (UseImage)
+            if (UseImage && DgvVerses.Columns.Count > 1)
             {
                 f.overlay.Source = new BitmapImage(new Uri(image));
                 f.LblTop.Visibility = Visibility.Visible;
@@ -644,14 +672,16 @@ namespace SimpleBibleSongDisplayer
             {
                 From = 1,
                 To = 0,
-                Duration = new System.Windows.Duration(TimeSpan.FromMilliseconds(milliseconds)),
+                Duration = new Duration(TimeSpan.FromMilliseconds(milliseconds)),
                 AutoReverse = true
             };
             f.LblText.BeginAnimation(UIElement.OpacityProperty, da);
 
             await Task.Delay(milliseconds);
             if (a.Length == 1)
+            {
                 f.LblText.Text = a[0];
+            }
             else
             {
                 f.LblTop.Text = a[0];

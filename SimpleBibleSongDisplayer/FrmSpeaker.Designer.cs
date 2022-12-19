@@ -36,6 +36,8 @@
             // 
             // TxtName
             // 
+            this.TxtName.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.TxtName.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.TxtName.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TxtName.Location = new System.Drawing.Point(12, 12);
             this.TxtName.Name = "TxtName";
