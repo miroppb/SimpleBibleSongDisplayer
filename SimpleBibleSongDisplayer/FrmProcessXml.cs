@@ -1,9 +1,8 @@
 ﻿using Dapper;
+using MySql.Data.MySqlClient;
 using SimpleBibleSongDisplayer.Dapper;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -18,8 +17,6 @@ namespace SimpleBibleSongDisplayer
         List<int> ids = new List<int>();
         List<string> text = new List<string>(); //we'll do both, adding new songs, and editing
         public string SaveFile = "";
-
-        SQLiteConnection dbConnection = new SQLiteConnection("Data Source=songs.sqlite;Version=3;");
 
         /// <summary>
         /// Initialize form for editing text inside an XML file
@@ -53,7 +50,7 @@ namespace SimpleBibleSongDisplayer
         private void RefreshDropDown()
         {
             List<clsSongs> songs = null;
-            using (SQLiteConnection db = secrets.GetConnection())
+            using (MySqlConnection db = secrets.GetConnectionString())
                 songs = db.Query<clsSongs>("SELECT * FROM songs ORDER BY song").ToList();
 
             ids.Clear(); text.Clear();
@@ -150,7 +147,7 @@ namespace SimpleBibleSongDisplayer
 
                 if (MessageBox.Show("Are you sure you want to save this song into the database?", "For Real?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    using (SQLiteConnection db = secrets.GetConnection())
+                    using (MySqlConnection db = secrets.GetConnectionString())
                         db.Execute("INSERT INTO songs VALUES(NULL, '" + TxtSong.Text.Replace("'", "''") + "');");
 
                     RefreshDropDown();
@@ -160,7 +157,7 @@ namespace SimpleBibleSongDisplayer
             {
                 if (MessageBox.Show("Are you sure you want to save this song back into the database?", "For Real?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    using (SQLiteConnection db = secrets.GetConnection())
+                    using (MySqlConnection db = secrets.GetConnectionString())
                         db.Execute("UPDATE songs SET song = '" + TxtSong.Text.Replace("'", "''") + "' WHERE id = " + ids[CmbSongs.SelectedIndex] + ";");
 
                     int cur = CmbSongs.SelectedIndex;

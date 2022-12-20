@@ -9,9 +9,6 @@ using System.Windows.Media.Imaging;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
-using System.Drawing;
-using System.Data.SQLite;
-using Dapper;
 using miroppb;
 
 namespace SimpleBibleSongDisplayer
@@ -36,32 +33,8 @@ namespace SimpleBibleSongDisplayer
             if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\SimpleBibleSongDisplayer"))
             {
                 Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\SimpleBibleSongDisplayer");
-                miroppb.libmiroppb.Log("Created Application folder: " + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\SimpleBibleSongDisplayer");
+                libmiroppb.Log("Created Application folder: " + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\SimpleBibleSongDisplayer");
             }
-
-            CheckDB();
-        }
-
-        private async void CheckDB()
-        {
-            //check db
-            libmiroppb.Log("Checking db...");
-            try
-            {
-                if (!File.Exists(secrets.filename))
-                {
-                    libmiroppb.Log("Creating db and adding tables");
-                    File.Create(secrets.filename);
-                    await Task.Delay(100);
-                    using (SQLiteConnection db = secrets.GetConnection())
-                    {
-                        db.Execute("CREATE TABLE 'autocomplete' ('id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 'text' TEXT);");
-                        db.Execute("CREATE TABLE 'songs' ('id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 'text' TEXT);");
-                        db.Close();
-                    }
-                }
-            }
-            catch (Exception ex) { libmiroppb.Log($"Error: {ex.Message}"); }
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
