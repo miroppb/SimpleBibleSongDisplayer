@@ -10,6 +10,9 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
 using miroppb;
+using System.Threading;
+using System.Windows.Media;
+using System.Windows.Controls;
 
 namespace SimpleBibleSongDisplayer
 {
@@ -413,7 +416,7 @@ namespace SimpleBibleSongDisplayer
             int index = this.LstSchedule.IndexFromPoint(point);
             if (index < 0) index = this.LstSchedule.Items.Count - 1;
             //object data = e.Data.GetData(typeof(string));
-            string data = ((ListBox)sender).SelectedItem.ToString();
+            string data = ((System.Windows.Forms.ListBox)sender).SelectedItem.ToString();
             this.LstSchedule.Items.Remove(data);
             this.LstSchedule.Items.Insert(index, data);
         }
@@ -657,6 +660,21 @@ namespace SimpleBibleSongDisplayer
             {
                 f.LblTop.Text = a[0];
                 f.LblText.Text = a[1];
+
+                TextBlock tb = f.LblText;
+                Typeface typeface = new Typeface(tb.FontFamily, tb.FontStyle, tb.FontWeight, tb.FontStretch);
+
+                FormattedText formattedText = new FormattedText(tb.Text, Thread.CurrentThread.CurrentCulture,
+                    tb.FlowDirection, typeface, tb.FontSize, tb.Foreground, VisualTreeHelper.GetDpi(f).PixelsPerDip);
+
+                // If the text is clipped, lower the size
+                tb.FontSize = 30; //default
+                while (formattedText.Width > (tb.ActualWidth * 3.38))
+                {
+                    tb.FontSize--;
+                    formattedText = new FormattedText(tb.Text, Thread.CurrentThread.CurrentCulture,
+                        tb.FlowDirection, typeface, tb.FontSize, tb.Foreground, VisualTreeHelper.GetDpi(f).PixelsPerDip);
+                }
             }
         }
 

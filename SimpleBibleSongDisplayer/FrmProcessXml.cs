@@ -61,9 +61,9 @@ namespace SimpleBibleSongDisplayer
             foreach (clsSongs song in songs)
             {
                 ids.Add(song.id);
-                text.Add(song.text);
+                text.Add(song.song);
 
-                string firstLine = song.text.Replace("\n\r", "").Substring(0, song.text.IndexOf(Environment.NewLine)).Replace("\t<line>", "");
+                string firstLine = song.song.Replace("\n\r", "").Substring(0, song.song.IndexOf(Environment.NewLine)).Replace("\t<line>", "");
                 CmbSongs.Items.Add(firstLine);
                 acs.Add(firstLine);
             }
@@ -73,7 +73,7 @@ namespace SimpleBibleSongDisplayer
         private void BtnRemSpac_Click(object sender, EventArgs e)
         {
             //lets try to remove extra spaces...
-            TxtSong.Text = Regex.Replace(TxtSong.Text, "\\s+?\\n", Environment.NewLine);
+            TxtSong.Text = Regex.Replace(TxtSong.Text, "^\r\n\t<line>", "\t<line>");
             TxtSong.Text = Regex.Replace(TxtSong.Text, "\\s+?<\\/line>", "</line>");
         }
 
