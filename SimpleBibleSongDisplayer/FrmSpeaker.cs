@@ -11,36 +11,45 @@ namespace SimpleBibleSongDisplayer
     public partial class FrmSpeaker : Form
     {
         List<string> ACList = new List<string>();
+        public bool DBOnline = true;
 
-        public FrmSpeaker()
+        public FrmSpeaker(bool _db)
         {
             InitializeComponent();
+            DBOnline = _db;
 
-            using (MySqlConnection db = secrets.GetConnectionString())
+            if (_db)
             {
-                AutoCompleteStringCollection acs = new AutoCompleteStringCollection();
-                List<clsAutoComplete> ac = db.Query<clsAutoComplete>("SELECT text FROM autocomplete").ToList();
-                ac.ForEach(c => acs.Add(c.text));
-                ac.ForEach(c => ACList.Add(c.text));
-                TxtName.AutoCompleteCustomSource = acs;
+                using (MySqlConnection db = secrets.GetConnectionString())
+                {
+                    AutoCompleteStringCollection acs = new AutoCompleteStringCollection();
+                    List<clsAutoComplete> ac = db.Query<clsAutoComplete>("SELECT text FROM autocomplete").ToList();
+                    ac.ForEach(c => acs.Add(c.text));
+                    ac.ForEach(c => ACList.Add(c.text));
+                    TxtName.AutoCompleteCustomSource = acs;
+                }
             }
         }
 
         private void BtnOK_Click(object sender, EventArgs e)
         {
             //save top to db
-            using (MySqlConnection db = secrets.GetConnectionString())
+            if (DBOnline)
             {
-                double per = 0;
-                foreach (string a in ACList)
+                using (MySqlConnection db = secrets.GetConnectionString())
                 {
-                    per = ComputePercentage.CalculateSimilarity(a, TxtName.Text);
-                    if ((per * 100) > 90)
-                        break;
+                    double per = 0;
+                    foreach (string a in ACList)
+                    {
+                        per = ComputePercentage.CalculateSimilarity(a, TxtName.Text);
+                        if ((per * 100) > 90)
+                            break;
+                    }
+                    if ((per * 100) < 90)
+                        db.Execute("INSERT INTO autocomplete VALUES(NULL, @text);", new DynamicParameters(new { text = TxtName.Text }));
                 }
-                if ((per * 100) < 90)
-                    db.Execute("INSERT INTO autocomplete VALUES(NULL, @text);", new DynamicParameters(new { text = TxtName.Text }));
             }
+            
 
             this.DialogResult = DialogResult.OK;
             this.Close();

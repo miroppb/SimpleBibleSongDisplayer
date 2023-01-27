@@ -12,6 +12,8 @@ namespace SimpleBibleSongDisplayer
 {
     public partial class FrmProcessXml : Form
     {
+        public bool DBOnline { get; }
+
         public List<string> songs = new List<string>();
         private int cur = 0;
         List<int> ids = new List<int>();
@@ -22,9 +24,10 @@ namespace SimpleBibleSongDisplayer
         /// Initialize form for editing text inside an XML file
         /// </summary>
         /// <param name="s">List of strings containing the text of songs</param>
-        public FrmProcessXml(List<string> s)
+        public FrmProcessXml(List<string> s, bool _DBOnline)
         {
             InitializeComponent();
+            DBOnline = _DBOnline;
 
             songs = s;
 
@@ -49,25 +52,30 @@ namespace SimpleBibleSongDisplayer
 
         private void RefreshDropDown()
         {
-            List<clsSongs> songs = null;
-            using (MySqlConnection db = secrets.GetConnectionString())
-                songs = db.Query<clsSongs>("SELECT * FROM songs ORDER BY song").ToList();
-
-            ids.Clear(); text.Clear();
-            CmbSongs.SelectedIndex = -1;
-            CmbSongs.Items.Clear();
-            AutoCompleteStringCollection acs = new AutoCompleteStringCollection();
-
-            foreach (clsSongs song in songs)
+            if (DBOnline)
             {
-                ids.Add(song.id);
-                text.Add(song.song);
+                List<clsSongs> songs = null;
+                using (MySqlConnection db = secrets.GetConnectionString())
+                    songs = db.Query<clsSongs>("SELECT * FROM songs ORDER BY song").ToList();
 
-                string firstLine = song.song.Replace("\n\r", "").Substring(0, song.song.IndexOf(Environment.NewLine)).Replace("\t<line>", "");
-                CmbSongs.Items.Add(firstLine);
-                acs.Add(firstLine);
+                ids.Clear(); text.Clear();
+                CmbSongs.SelectedIndex = -1;
+                CmbSongs.Items.Clear();
+                AutoCompleteStringCollection acs = new AutoCompleteStringCollection();
+
+                foreach (clsSongs song in songs)
+                {
+                    ids.Add(song.id);
+                    text.Add(song.song);
+
+                    string firstLine = song.song.Replace("\n\r", "").Substring(0, song.song.IndexOf(Environment.NewLine)).Replace("\t<line>", "");
+                    CmbSongs.Items.Add(firstLine);
+                    acs.Add(firstLine);
+                }
+                CmbSongs.AutoCompleteCustomSource = acs;
             }
-            CmbSongs.AutoCompleteCustomSource = acs;
+            else
+                MessageBox.Show("DB Offline");
         }
 
         private void BtnRemSpac_Click(object sender, EventArgs e)
@@ -147,27 +155,37 @@ namespace SimpleBibleSongDisplayer
 
                 if (MessageBox.Show("Are you sure you want to save this song into the database?", "For Real?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    using (MySqlConnection db = secrets.GetConnectionString())
-                        db.Execute("INSERT INTO songs VALUES(NULL, '" + TxtSong.Text.Replace("'", "''") + "');");
+                    if (DBOnline)
+                    {
+                        using (MySqlConnection db = secrets.GetConnectionString())
+                            db.Execute("INSERT INTO songs VALUES(NULL, '" + TxtSong.Text.Replace("'", "''") + "');");
 
-                    RefreshDropDown();
+                        RefreshDropDown();
+                    }
                 }
+                else
+                    MessageBox.Show("DB Offline");
             }
             else
             {
                 if (MessageBox.Show("Are you sure you want to save this song back into the database?", "For Real?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    using (MySqlConnection db = secrets.GetConnectionString())
-                        db.Execute("UPDATE songs SET song = '" + TxtSong.Text.Replace("'", "''") + "' WHERE id = " + ids[CmbSongs.SelectedIndex] + ";");
-
-                    int cur = CmbSongs.SelectedIndex;
-                    CmbSongs.SelectedIndex = -1;
-                    RefreshDropDown();
-                    try
+                    if (DBOnline)
                     {
-                        CmbSongs.SelectedIndex = cur;
+                        using (MySqlConnection db = secrets.GetConnectionString())
+                            db.Execute("UPDATE songs SET song = '" + TxtSong.Text.Replace("'", "''") + "' WHERE id = " + ids[CmbSongs.SelectedIndex] + ";");
+
+                        int cur = CmbSongs.SelectedIndex;
+                        CmbSongs.SelectedIndex = -1;
+                        RefreshDropDown();
+                        try
+                        {
+                            CmbSongs.SelectedIndex = cur;
+                        }
+                        catch { }
                     }
-                    catch { }
+                    else
+                        MessageBox.Show("DB Offline");
                 }
             }
         }

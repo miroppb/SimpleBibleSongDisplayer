@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SimpleBibleSongDisplayer
+﻿namespace SimpleBibleSongDisplayer
 {
-    public enum Action { setscheduleitem, show, setshowitem, setverseitem, search };
+    public enum Action { setscheduleitem, show, setshowitem, setverseitem, search, volume };
 }

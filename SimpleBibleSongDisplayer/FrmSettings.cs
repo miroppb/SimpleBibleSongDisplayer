@@ -25,13 +25,13 @@ namespace SimpleBibleSongDisplayer
 
         private void BtnClose_Click(object sender, EventArgs e)
         {
-            SimpleBibleSongDisplayer.Properties.Settings.Default.UseXML = ChkXML.Checked;
-            SimpleBibleSongDisplayer.Properties.Settings.Default.xml = TxtXML.Text;
-            SimpleBibleSongDisplayer.Properties.Settings.Default.UseImage = ChkUseOverlay.Checked;
-            SimpleBibleSongDisplayer.Properties.Settings.Default.image = txtOverlay.Text;
-            SimpleBibleSongDisplayer.Properties.Settings.Default.AOT = ChkAOT.Checked;
-            SimpleBibleSongDisplayer.Properties.Settings.Default.SecondMonitor = ChkSecond.Checked;
-            SimpleBibleSongDisplayer.Properties.Settings.Default.Save();
+            Properties.Settings.Default.UseXML = ChkXML.Checked;
+            Properties.Settings.Default.xml = TxtXML.Text;
+            Properties.Settings.Default.UseImage = ChkUseOverlay.Checked;
+			Properties.Settings.Default.image = txtOverlay.Text;
+            Properties.Settings.Default.AOT = ChkAOT.Checked;
+			Properties.Settings.Default.SecondMonitor = ChkSecond.Checked;
+			Properties.Settings.Default.Save();
             this.Close();
         }
 
@@ -71,13 +71,13 @@ namespace SimpleBibleSongDisplayer
             }
             if (!starting)
             {
-                ((FrmMain)this.Owner).UseImage = ChkUseOverlay.Checked;
+                ((FrmMain)Owner).UseImage = ChkUseOverlay.Checked;
             }
         }
 
         private void ChkAOT_CheckedChanged(object sender, EventArgs e)
         {
-            ((FrmMain)this.Owner).TopMost = ChkAOT.Checked;
+            ((FrmMain)Owner).TopMost = ChkAOT.Checked;
         }
 
         private void txtFont_Click(object sender, EventArgs e)
@@ -86,7 +86,7 @@ namespace SimpleBibleSongDisplayer
             if (fd.ShowDialog() == DialogResult.OK)
             {
                 txtFont.Text = "Font: " + fd.Font.Name + " " + fd.Font.Size.ToString();
-                SimpleBibleSongDisplayer.Properties.Settings.Default.Font = fd.Font;
+				Properties.Settings.Default.Font = fd.Font;
             }
         }
     }
