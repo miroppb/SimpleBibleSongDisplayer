@@ -1,4 +1,4 @@
 ﻿namespace SimpleBibleSongDisplayer
 {
-    public enum Action { setscheduleitem, show, setshowitem, setverseitem, search, volume };
+    public enum Action { setscheduleitem, show, setshowitem, setverseitem, search, size };
 }

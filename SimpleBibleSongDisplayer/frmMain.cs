@@ -618,7 +618,7 @@ namespace SimpleBibleSongDisplayer
 				case Action.setverseitem:
 					DgvVerses.Rows[ByHowMuch].Selected = true;
 					break;
-				case Action.volume:
+				case Action.size:
 					if (ByHowMuch > 0)
 						BtnUp_Click(null, null);
 					else
