@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using SimpleBibleSongDisplayer.Dapper;
 using System;
 using System.Collections.Generic;

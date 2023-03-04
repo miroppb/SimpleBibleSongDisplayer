@@ -1,9 +1,8 @@
 ﻿using miroppb;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -55,8 +54,10 @@ namespace SimpleBibleSongDisplayer
 
 		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			FrmSettings frm = new FrmSettings();
-			frm.starting = true;
+			FrmSettings frm = new FrmSettings
+			{
+				starting = true
+			};
 			try
 			{
 				frm.ChkXML.Checked = UseXML;
@@ -322,9 +323,11 @@ namespace SimpleBibleSongDisplayer
 
 		private void openScheduleToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			OpenFileDialog ofd = new OpenFileDialog();
-			ofd.Filter = "SBSD File|*.sbsd";
-			ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+			OpenFileDialog ofd = new OpenFileDialog
+			{
+				Filter = "SBSD File|*.sbsd",
+				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+			};
 			if (ofd.ShowDialog() == DialogResult.OK)
 			{
 				StreamReader r = new StreamReader(ofd.FileName);
@@ -339,10 +342,12 @@ namespace SimpleBibleSongDisplayer
 
 		private void saveScheduleToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			SaveFileDialog sfd = new SaveFileDialog();
-			sfd.Filter = "SBSD File|*.sbsd";
-			sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-			sfd.FileName = GetNextWeekday(DateTime.Now, DayOfWeek.Sunday).ToString("yMMdd") + ".sbsd";
+			SaveFileDialog sfd = new SaveFileDialog
+			{
+				Filter = "SBSD File|*.sbsd",
+				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+				FileName = GetNextWeekday(DateTime.Now, DayOfWeek.Sunday).ToString("yMMdd") + ".sbsd"
+			};
 
 			if (currentSchedule != "")
 			{
@@ -449,9 +454,11 @@ namespace SimpleBibleSongDisplayer
 
 		private void processtxtToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			OpenFileDialog ofd = new OpenFileDialog();
-			ofd.Filter = "Text file|*.txt";
-			ofd.InitialDirectory = "\\\\192.168.3.4\\Users\\BFGC\\Desktop\\";
+			OpenFileDialog ofd = new OpenFileDialog
+			{
+				Filter = "Text file|*.txt",
+				InitialDirectory = "\\\\192.168.3.4\\Users\\BFGC\\Desktop\\"
+			};
 			if (ofd.ShowDialog() == DialogResult.OK)
 			{
 				FrmTxt2Xml frm = new FrmTxt2Xml();
@@ -483,8 +490,10 @@ namespace SimpleBibleSongDisplayer
 
 		private void processxmlToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			OpenFileDialog ofd = new OpenFileDialog();
-			ofd.Filter = "Xml file|*.xml";
+			OpenFileDialog ofd = new OpenFileDialog
+			{
+				Filter = "Xml file|*.xml"
+			};
 			if (ofd.ShowDialog() == DialogResult.OK)
 			{
 				string f = ofd.FileName;
@@ -544,7 +553,7 @@ namespace SimpleBibleSongDisplayer
 			{
 				try
 				{
-					LstShow.SelectedIndex = LstShow.SelectedIndex - i;
+					LstShow.SelectedIndex -= i;
 				}
 				catch { }
 			}

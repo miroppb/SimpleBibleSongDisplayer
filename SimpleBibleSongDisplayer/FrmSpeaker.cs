@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Dapper;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using SimpleBibleSongDisplayer.Dapper;
 
 namespace SimpleBibleSongDisplayer
