@@ -31,6 +31,7 @@ namespace SimpleBibleSongDisplayer
 			Properties.Settings.Default.image = txtOverlay.Text;
             Properties.Settings.Default.AOT = ChkAOT.Checked;
 			Properties.Settings.Default.SecondMonitor = ChkSecond.Checked;
+            Properties.Settings.Default.FullSong = ChkFullSong.Checked;
 			Properties.Settings.Default.Save();
             this.Close();
         }
@@ -54,7 +55,7 @@ namespace SimpleBibleSongDisplayer
         private void txtImage_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Images|*.png;*.jpg*.jpeg*.gif";
+            ofd.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif";
             if (ofd.ShowDialog() == DialogResult.OK)
                 txtOverlay.Text = ofd.FileName;
         }

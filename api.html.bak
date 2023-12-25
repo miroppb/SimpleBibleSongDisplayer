@@ -2,10 +2,11 @@
 <html>
 	<head>
 		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+		<script src="safari.js"></script>
 		<title>Junk</title>
 		<script>
 		$(document).ready(function() {  
-			$.getJSON("http://192.168.3.7:1111/api/schedule", function(data) { //load schedule
+			$.getJSON("http://localhost:1111/api/schedule", function(data) { //load schedule
 				$.each(data.schedule, function(key, value) {
 					if (String(value).length > 100)
 					{
@@ -23,12 +24,12 @@
 				});
 			});
 			$('#sch').on('change', function() {
-				$.get( "http://192.168.3.7:1111/api/setscheduleitem/" + this.value ); //send new item on schedule
+				$.get( "http://localhost:1111/api/setscheduleitem/" + this.value ); //send new item on schedule
 				var selectedText = $(this).find("option:selected").text();
 				if (selectedText.includes("Speaker"))
 				{
 					setTimeout(function(){
-					$.getJSON("http://192.168.3.7:1111/api/show", function(data) { //get current show
+					$.getJSON("http://localhost:1111/api/show", function(data) { //get current show
 						$('#shw').empty();
 						$.each(data.show, function(key, value) {
 							if (String(value).length > 100)
@@ -48,9 +49,9 @@
 				}
 			});
 			$('#show').click(function() {
-				$.get( "http://192.168.3.7:1111/api/go"); //show current bible
+				$.get( "http://localhost:1111/api/go"); //show current bible
 				setTimeout(function(){
-					$.getJSON("http://192.168.3.7:1111/api/show", function(data) { //get current show
+					$.getJSON("http://localhost:1111/api/show", function(data) { //get current show
 						$('#shw').empty();
 						$.each(data.show, function(key, value) {
 							if (String(value).length > 100)
@@ -65,19 +66,16 @@
 							$("#shw").trigger('item-added');
 						});
 						$('[name=show]').val(data.selected);
-						$([document.documentElement, document.body]).animate({
-							scrollTop: $("#shw").offset().top
-						}, 500);
 					});
 				}, 1000);
 			});
 			$('#shw').on('change', function() {
-				$.get( "http://192.168.3.7:1111/api/setshowitem/" + (parseInt(this.value))); //change item on show
+				$.get( "http://localhost:1111/api/setshowitem/" + (parseInt(this.value))); //change item on show
 				console.log((parseInt(this.value)));
 			});
 			$('#srch').click(function() {
 				var a = $('#search').val();
-				$.getJSON("http://192.168.3.7:1111/api/search/" + a, function(data) { //search bible
+				$.getJSON("http://localhost:1111/api/search/" + a, function(data) { //search bible
 					$('#srch_result').empty();
 					$.each(data.search, function(key, value) {
 						if (String(value).length > 100)
@@ -94,21 +92,20 @@
 				});
 			});
 			$('#srch_result').on('change', function() {
-				$.get("http://192.168.3.7:1111/api/setverseitem/" + this.value); //change item on verse
+				$.get("http://localhost:1111/api/setverseitem/" + this.value); //change item on verse
 				console.log(this.value);
 			});
 			$('#hide').click(function() {
 				$('#srch_result').empty();
 				$('#srch_result').attr('size', 5);
 			});
+			$("select").fixForSafariMobile();
 		});
-		
-		function Size(updown) {
-			$.get("http://192.168.3.7:1111/api/size/" + updown);
-			console.log(updown);
-		};
 		</script>
 		<style>
+			#srch_result_safarimobile { height: 200px;  width:700px; }
+			#shw_safarimobile { height: 300px;  width:700px; }
+			option_safarimobile { padding: 5px 2px; }
 			.multilineselect li { line-height: 2; }
 			#shw option { padding: 5px 0px; }
 		</style>
@@ -116,8 +113,7 @@
 	<body>
 		<select id="sch" name="schedule">
 		</select><br />
-		<button id="show">Show</button>&nbsp;
-			<button id="sizeup" onclick="Size(1)">Up</button><button id="sizedown" onclick="Size(-1)">Down</button><br />
+		<button id="show">Show</button><br />
 		<input type="text" id="search" size="25" autocomplete="off" /><button id="srch">Search</button><button id="hide">Clear</button><br />
 		<select id="srch_result" name="search_result" size="5"></select><br />
 		<select id="shw" name="show" size="5">

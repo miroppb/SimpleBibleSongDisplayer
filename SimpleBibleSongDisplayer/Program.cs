@@ -7,7 +7,7 @@ namespace SimpleBibleSongDisplayer
 {
     static class Program
     {
-        public static FrmMain frm { get; private set; }
+		public static FrmMain Frm { get; private set; }
 
         /// <summary>
         /// The main entry point for the application.
@@ -19,8 +19,8 @@ namespace SimpleBibleSongDisplayer
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            frm = new FrmMain();
-            Application.Run(frm);
+            Frm = new FrmMain();
+            Application.Run(Frm);
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

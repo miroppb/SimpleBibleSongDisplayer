@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>SimpleBibleSongDisplayer</RootNamespace>
     <AssemblyName>SimpleBibleSongDisplayer</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
@@ -100,6 +100,7 @@
     <Compile Include="ComputePercentage.cs" />
     <Compile Include="Controllers\SBSDController.cs" />
     <Compile Include="Dapper\clsAutoComplete.cs" />
+    <Compile Include="Dapper\ClsSchedule.cs" />
     <Compile Include="Dapper\clsSongs.cs" />
     <Compile Include="FrmProcessXml.cs">
       <SubType>Form</SubType>
@@ -112,6 +113,12 @@
     </Compile>
     <Compile Include="frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmSaveSchedule.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmSaveSchedule.Designer.cs">
+      <DependentUpon>FrmSaveSchedule.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmSettings.cs">
       <SubType>Form</SubType>
@@ -141,6 +148,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmProcessXml.resx">
       <DependentUpon>FrmProcessXml.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmSaveSchedule.resx">
+      <DependentUpon>FrmSaveSchedule.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmSettings.resx">
       <DependentUpon>FrmSettings.cs</DependentUpon>
@@ -177,6 +187,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="api.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="bible.png" />
     <Content Include="monitor_nWu_icon.ico" />
   </ItemGroup>
@@ -194,6 +207,9 @@
     </PackageReference>
     <PackageReference Include="Dapper">
       <Version>2.0.123</Version>
+    </PackageReference>
+    <PackageReference Include="Dapper.Contrib">
+      <Version>2.0.78</Version>
     </PackageReference>
     <PackageReference Include="Fody">
       <Version>6.6.4</Version>

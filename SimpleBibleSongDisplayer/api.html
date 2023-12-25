@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<title>Junk</title>
+	<script>
+		$(document).ready(function () {
+			$.getJSON("/api/schedule", function (data) { //load schedule
+				$.each(data.schedule, function (key, value) {
+					if (String(value).length > 100) {
+						$('#sch').append(new Option(String(value).substr(0, 50) + '...' + String(value).substr(-50), key));
+					}
+					else {
+						$('#sch').append(new Option(value, key));
+					}
+					$('#sch').attr('size', key + 1);
+					if (data.selected > -1) {
+						$('[name=schedule]').val(data.selected);
+					}
+				});
+			});
+			$('#sch').on('change', function () {
+				$.get("/api/setscheduleitem/" + this.value); //send new item on schedule
+				var selectedText = $(this).find("option:selected").text();
+				if (selectedText.includes("Speaker")) {
+					setTimeout(function () {
+						$.getJSON("/api/show", function (data) { //get current show
+							$('#shw').empty();
+							$.each(data.show, function (key, value) {
+								if (String(value).length > 100) {
+									$('#shw').append(new Option(String(value).substr(0, 50) + '...' + String(value).substr(-50), key));
+								}
+								else {
+									$('#shw').append(new Option(value, key));
+								}
+								$('#shw').attr('size', key + 1);
+								$("#shw").trigger('item-added');
+							});
+							$('[name=show]').val(data.selected);
+						});
+					}, 1000);
+				}
+			});
+			$('#show').click(function () {
+				$.get("/api/go"); //show current bible
+				setTimeout(function () {
+					$.getJSON("/api/show", function (data) { //get current show
+						$('#shw').empty();
+						$.each(data.show, function (key, value) {
+							if (String(value).length > 100) {
+								$('#shw').append(new Option(String(value).substr(0, 50) + '...' + String(value).substr(-50), key));
+							}
+							else {
+								$('#shw').append(new Option(value, key));
+							}
+							$('#shw').attr('size', key + 1);
+							$("#shw").trigger('item-added');
+						});
+						$('[name=show]').val(data.selected);
+						$([document.documentElement, document.body]).animate({
+							scrollTop: $("#shw").offset().top
+						}, 500);
+					});
+				}, 1000);
+			});
+			$('#shw').on('change', function () {
+				$.get("/api/setshowitem/" + (parseInt(this.value))); //change item on show
+				console.log((parseInt(this.value)));
+			});
+			$('#srch').click(function () {
+				var a = $('#search').val();
+				$.getJSON("/api/search/" + a, function (data) { //search bible
+					$('#srch_result').empty();
+					$.each(data.search, function (key, value) {
+						if (String(value).length > 100) {
+							$('#srch_result').append(new Option(String(value).substr(0, 50) + '...' + String(value).substr(-50), key));
+						}
+						else {
+							$('#srch_result').append(new Option(value, key));
+						}
+						$('#srch_result').attr('size', key + 1);
+						$("#srch_result").trigger('item-added');
+					});
+				});
+			});
+			$('#srch_result').on('change', function () {
+				$.get("/api/setverseitem/" + this.value); //change item on verse
+				console.log(this.value);
+			});
+			$('#hide').click(function () {
+				$('#srch_result').empty();
+				$('#srch_result').attr('size', 5);
+			});
+			$(function () {
+				$('body').focus(function () {
+					console.log('hello');
+					$('#shw').focus();
+				});
+			});
+		});
+
+		function Size(updown) {
+			$.get("/api/size/" + updown);
+			console.log(updown);
+		};
+
+		function FocusOnMe() {
+			setTimeout(function () {
+				if ($(document.activeElement)[0] === document.body) {
+					$('#shw').focus();
+				}
+			}, 50);
+		};
+	</script>
+	<style>
+		.multilineselect li {
+			line-height: 2;
+		}
+
+		#shw option {
+			padding: 5px 0px;
+		}
+	</style>
+</head>
+<body>
+	<select id="sch" name="schedule">
+	</select><br />
+	<button id="show">Show</button>&nbsp;
+	<button id="sizeup" onclick="Size(1)">Up</button><button id="sizedown" onclick="Size(-1)">Down</button><br />
+	<input type="text" id="search" size="25" autocomplete="off" /><button id="srch">Search</button><button id="hide">Clear</button><br />
+	<select id="srch_result" name="search_result" size="5"></select><br />
+	<select id="shw" name="show" size="5" onblur="FocusOnMe();">
+	</select>
+</body>
+</html>

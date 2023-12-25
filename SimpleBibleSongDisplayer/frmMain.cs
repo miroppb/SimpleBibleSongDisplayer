@@ -1,5 +1,8 @@
-﻿using miroppb;
+﻿using Dapper;
+using Dapper.Contrib.Extensions;
+using miroppb;
 using MySqlConnector;
+using SimpleBibleSongDisplayer.Dapper;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -20,7 +23,7 @@ namespace SimpleBibleSongDisplayer
 	public partial class FrmMain : Form
 	{
 		public string xml = "", image = "";
-		public bool UseXML = true, UseImage = true, secondMonitor = false;
+		public bool UseXML = true, UseImage = true, secondMonitor = false, FullSong = false;
 		DataTable dt = null;
 		private bool _beginDragDrop = false;
 
@@ -66,6 +69,7 @@ namespace SimpleBibleSongDisplayer
 				frm.txtOverlay.Text = image;
 				frm.ChkSecond.Checked = secondMonitor;
 				frm.ChkAOT.Checked = TopMost;
+				frm.ChkFullSong.Checked = FullSong;
 
 				frm.txtFont.Text = "Font: " + Properties.Settings.Default.Font.Name + " " + Properties.Settings.Default.Font.Size;
 			}
@@ -186,6 +190,7 @@ namespace SimpleBibleSongDisplayer
 				{
 					LstSchedule.Items.Add(a.Cells[0].Value);
 				}
+				CheckScheduleSizeAndResize();
 			}
 		}
 
@@ -208,6 +213,8 @@ namespace SimpleBibleSongDisplayer
 				}
 				catch { System.Windows.MessageBox.Show("Second monitor not detected. Disabling..."); secondMonitor = false; SimpleBibleSongDisplayer.Properties.Settings.Default.SecondMonitor = false; }
 			}
+			f.LblText.Height = 125;
+			f.LblText.Width = 1132;
 			if (UseImage && DgvVerses.Columns.Count > 1)
 			{
 				f.overlay.Source = new BitmapImage(new Uri(image));
@@ -216,6 +223,19 @@ namespace SimpleBibleSongDisplayer
 				try
 				{
 					f.LblTop.FontFamily = new System.Windows.Media.FontFamily(SimpleBibleSongDisplayer.Properties.Settings.Default.Font.FontFamily.ToString());
+					f.LblText.FontFamily = new System.Windows.Media.FontFamily(SimpleBibleSongDisplayer.Properties.Settings.Default.Font.FontFamily.ToString());
+				}
+				catch { }
+			}
+			else if (FullSong)
+			{
+				f.LblTop.Visibility = Visibility.Hidden;
+				f.LblText.HorizontalAlignment = System.Windows.HorizontalAlignment.Center;
+				f.LblText.VerticalAlignment = System.Windows.VerticalAlignment.Center;
+				f.LblText.Width = 0;
+				f.LblText.Height = 0;
+				try
+				{
 					f.LblText.FontFamily = new System.Windows.Media.FontFamily(SimpleBibleSongDisplayer.Properties.Settings.Default.Font.FontFamily.ToString());
 				}
 				catch { }
@@ -323,51 +343,121 @@ namespace SimpleBibleSongDisplayer
 
 		private void openScheduleToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			OpenFileDialog ofd = new OpenFileDialog
+			FrmSaveSchedule frm = new FrmSaveSchedule();
+			frm.BtnSave.Text = "Open";
+			frm.TxtName.Enabled = false;
+			frm.CmbSchedules.Enabled = true;
+			List<ClsSchedule> sch = null;
+			using (MySqlConnection conn = secrets.GetConnectionString())
 			{
-				Filter = "SBSD File|*.sbsd",
-				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
-			};
-			if (ofd.ShowDialog() == DialogResult.OK)
-			{
-				StreamReader r = new StreamReader(ofd.FileName);
-				string[] a = r.ReadToEnd().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-				LstSchedule.Items.Clear();
-				LstSchedule.Items.AddRange(a);
-				r.Close();
-
-				updateCurrentSchedule(ofd.FileName);
+				sch = conn.Query<ClsSchedule>("SELECT id, name FROM schedule").ToList();
+				frm.CmbSchedules.Items.AddRange(sch.Select(x => x.Name).ToArray());
 			}
+			bool _AOT = TopMost;
+			TopMost = false;
+			if (frm.ShowDialog() == DialogResult.OK)
+			{
+				if (frm.CmbSchedules.SelectedItem != null)
+				{
+					using (MySqlConnection conn2 = secrets.GetConnectionString())
+					{
+						ClsSchedule newsch = conn2.Get<ClsSchedule>(sch.First(x => x.Name == frm.CmbSchedules.SelectedItem.ToString()).Id);
+						LstSchedule.Items.AddRange(newsch.Schedule.Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
+					}
+				}
+			}
+			else
+			{
+				OpenFileDialog ofd = new OpenFileDialog
+				{
+					Filter = "SBSD File|*.sbsd",
+					InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+				};
+				if (ofd.ShowDialog() == DialogResult.OK)
+				{
+					StreamReader r = new StreamReader(ofd.FileName);
+					string[] a = r.ReadToEnd().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+					LstSchedule.Items.Clear();
+					LstSchedule.Items.AddRange(a);
+					CheckScheduleSizeAndResize();
+					r.Close();
+
+					updateCurrentSchedule(ofd.FileName);
+				}
+			}
+			CheckScheduleSizeAndResize();
+			TopMost = _AOT;
 		}
 
 		private void saveScheduleToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			SaveFileDialog sfd = new SaveFileDialog
+			FrmSaveSchedule frm = new FrmSaveSchedule();
+			frm.CmbSchedules.Enabled = false;
+			frm.TxtName.Enabled = true;
+			frm.BtnSave.Text = "Save";
+			frm.TxtName.Text = GetNextWeekday(DateTime.Now, DayOfWeek.Sunday).ToString("yMMdd");
+			bool _AOT = TopMost;
+			TopMost = false;
+			if (frm.ShowDialog() == DialogResult.OK)
 			{
-				Filter = "SBSD File|*.sbsd",
-				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-				FileName = GetNextWeekday(DateTime.Now, DayOfWeek.Sunday).ToString("yMMdd") + ".sbsd"
-			};
-
-			if (currentSchedule != "")
-			{
-				sfd.InitialDirectory = Path.GetDirectoryName(currentSchedule);
-				sfd.FileName = Path.GetFileName(currentSchedule);
-			}
-			if (sfd.ShowDialog() == DialogResult.OK)
-			{
-				StreamWriter w = new StreamWriter(sfd.FileName);
 				string a = "";
 				foreach (string l in LstSchedule.Items)
 				{
 					a += l + Environment.NewLine;
 				}
-				w.Write(a.Trim());
-				w.Write("\t");
-				w.Close();
-
-				updateCurrentSchedule(sfd.FileName);
+				using (MySqlConnection conn = secrets.GetConnectionString())
+				{
+					ClsSchedule check = conn.Query<ClsSchedule>("SELECT * FROM schedule WHERE name = @name", new { name = frm.TxtName.Text.Trim() }).FirstOrDefault();
+					if (check != null)
+					{
+						if (System.Windows.Forms.MessageBox.Show("Overwrite?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+						{
+							check.Schedule = a;
+							conn.Update(check);
+						}
+					}
+					else
+					{
+						ClsSchedule sch = new ClsSchedule()
+						{
+							Name = frm.TxtName.Text.Trim(),
+							Schedule = a.Trim()
+						};
+						conn.Insert(sch);
+					}
+					System.Windows.Forms.MessageBox.Show("Saved db");
+				}
 			}
+			else
+			{
+				SaveFileDialog sfd = new SaveFileDialog
+				{
+					Filter = "SBSD File|*.sbsd",
+					InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+					FileName = GetNextWeekday(DateTime.Now, DayOfWeek.Sunday).ToString("yMMdd") + ".sbsd"
+				};
+
+				if (currentSchedule != "")
+				{
+					sfd.InitialDirectory = Path.GetDirectoryName(currentSchedule);
+					sfd.FileName = Path.GetFileName(currentSchedule);
+				}
+				if (sfd.ShowDialog() == DialogResult.OK)
+				{
+					StreamWriter w = new StreamWriter(sfd.FileName);
+					string a = "";
+					foreach (string l in LstSchedule.Items)
+					{
+						a += l + Environment.NewLine;
+					}
+					w.Write(a.Trim());
+					w.Write("\t");
+					w.Close();
+
+					updateCurrentSchedule(sfd.FileName);
+				}
+			}
+			TopMost = _AOT;
 		}
 
 		public static DateTime GetNextWeekday(DateTime start, DayOfWeek day)
@@ -382,6 +472,7 @@ namespace SimpleBibleSongDisplayer
 			if (LstSchedule.SelectedItems.Count > 0 && e.KeyCode == Keys.Delete)
 			{
 				LstSchedule.Items.RemoveAt(LstSchedule.SelectedIndex);
+				CheckScheduleSizeAndResize();
 			}
 		}
 
@@ -448,6 +539,7 @@ namespace SimpleBibleSongDisplayer
 			if (frm.ShowDialog() == DialogResult.OK)
 			{
 				LstSchedule.Items.Add("Speaker::" + frm.TxtName.Text + "\t" + frm.TxtLower.Text);
+				CheckScheduleSizeAndResize();
 			}
 			this.TopMost = a;
 		}
@@ -545,6 +637,12 @@ namespace SimpleBibleSongDisplayer
 				}
 			}
 		}
+		
+		void CheckScheduleSizeAndResize()
+		{
+			if (LstSchedule.Items.Count > 7)
+				splitContainer2.SplitterDistance = 495 - (13 * (LstSchedule.Items.Count - 7));
+		}
 
 		private void LstShow_KeyPress(object sender, KeyPressEventArgs e)
 		{
@@ -638,13 +736,10 @@ namespace SimpleBibleSongDisplayer
 
 		private void newScheduleToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (currentSchedule != "")
+			if (System.Windows.MessageBox.Show("Are you sure you want to start a new schedule?", "Simple Bible/Song Displayer", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
 			{
-				if (System.Windows.MessageBox.Show("Are you sure you want to start a new schedule?", "Simple Bible/Song Displayer", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-				{
-					LstSchedule.Items.Clear();
-					currentSchedule = "";
-				}
+				LstSchedule.Items.Clear();
+				currentSchedule = "";
 			}
 		}
 

@@ -11,35 +11,36 @@ namespace SimpleBibleSongDisplayer.Controllers
 	public class SBSDController : ControllerBase
 	{
 		[HttpGet]
-		public IEnumerable<string> Get()
+		public ContentResult Get()
 		{
-			return new string[] { "Hello" };
+			var html = System.IO.File.ReadAllText(@"api.html");
+			return base.Content(html, "text/html");
 		}
 
 		[HttpGet("{endpoint}")]
 		public ActionResult<string> Get(string endpoint)
 		{
 			object ret = null;
-			Program.frm.Invoke(new System.Action(() =>
+			Program.Frm.Invoke(new System.Action(() =>
 			{
 				switch (endpoint)
 				{
 					case "schedule":
 						List<string> schlist = new List<string>();
-						foreach (Object o in Program.frm.LstSchedule.Items)
+						foreach (Object o in Program.Frm.LstSchedule.Items)
 							schlist.Add(o.ToString());
-						int selected = Program.frm.LstSchedule.SelectedIndex;
+						int selected = Program.Frm.LstSchedule.SelectedIndex;
 
 						ret = new { schedule = schlist, selected };
 						break;
 					case "go":
-						Program.frm.DoStuff(Action.show);
+						Program.Frm.DoStuff(Action.show);
 						break;
 					case "show":
 						List<string> showlist = new List<string>();
-						foreach (Object o in Program.frm.LstShow.Items)
+						foreach (Object o in Program.Frm.LstShow.Items)
 							showlist.Add(o.ToString());
-						selected = Program.frm.LstShow.SelectedIndex;
+						selected = Program.Frm.LstShow.SelectedIndex;
 
 						ret = new { show = showlist, selected };
 						break;
@@ -52,16 +53,16 @@ namespace SimpleBibleSongDisplayer.Controllers
 		public ActionResult<string> Get(string _action, string change)
 		{
 			object ret = null;
-			Program.frm.Invoke(new System.Action(() =>
+			Program.Frm.Invoke(new System.Action(() =>
 			{
 				if (_action == "search")
 				{
 					//Searching bible
-					Program.frm.TxtSearch.Text = "";
-					Program.frm.TxtSearch.Text = change;
+					Program.Frm.TxtSearch.Text = "";
+					Program.Frm.TxtSearch.Text = change;
 
 					List<string> list = new List<string>();
-					foreach (System.Windows.Forms.DataGridViewRow row in Program.frm.DgvVerses.Rows)
+					foreach (System.Windows.Forms.DataGridViewRow row in Program.Frm.DgvVerses.Rows)
 						list.Add(row.Cells[0].Value + " " + row.Cells[1].Value);
 
 					ret = new { search = list };
@@ -69,7 +70,7 @@ namespace SimpleBibleSongDisplayer.Controllers
 				else
 				{
 					Enum.TryParse(_action, out Action _act);
-					Program.frm.DoStuff(_act, Convert.ToInt32(change));
+					Program.Frm.DoStuff(_act, Convert.ToInt32(change));
 					ret = "success";
 				}
 			}));
